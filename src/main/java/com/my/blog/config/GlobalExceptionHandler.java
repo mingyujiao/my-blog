@@ -1,0 +1,48 @@
+package com.my.blog.config;
+
+import com.my.blog.util.ResultBean;
+import com.my.blog.util.ResultEnum;
+import com.my.blog.util.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * @author jiaomingyu5778@gmail.com
+ * @date 2020/4/10 22:17
+ * 异常统一处理
+ */
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(value = Exception.class)
+    @ResponseBody
+    public Object logicExceptionHandler(HttpServletRequest request, Exception e, HttpServletResponse response) {
+        //系统级异常，错误码固定为-1，提示语固定为系统繁忙，请稍后再试
+        ResultBean result = ResultUtil.error(ResultEnum.UNKNOWN_ERROR.getCode(), ResultEnum.UNKNOWN_ERROR.getMsg());
+        // 处理参数错误，统一拦截
+        if (e instanceof MethodArgumentNotValidException) {
+            String message = ((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().iterator().next().getDefaultMessage();
+            result = ResultUtil.error(ResultEnum.PARAMETER_ERROR.getCode(), message);
+        }else {
+            //对系统级异常进行日志记录
+            logger.error("系统异常:" + e.getMessage(), e);
+        }
+        return result;
+    }
+
+}
