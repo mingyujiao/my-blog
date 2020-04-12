@@ -15,4 +15,6 @@ import com.my.blog.util.ResultBean;
 public interface IUserService extends IService<User> {
 
     ResultBean saveOrUpdateUser(User user);
+
+    ResultBean delUserById(User user);
 }

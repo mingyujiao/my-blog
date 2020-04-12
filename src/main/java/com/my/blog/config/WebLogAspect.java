@@ -1,11 +1,14 @@
 package com.my.blog.config;
 
 import com.google.gson.Gson;
+import com.my.blog.entity.Log;
+import com.my.blog.mapper.LogMapper;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,6 +16,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 
 /**
  * @author jiaomingyu5778@gmail.com
@@ -22,6 +26,9 @@ import java.lang.reflect.Method;
 @Component
 //@Profile({"dev", "test"})
 public class WebLogAspect {
+
+    @Autowired
+    private LogMapper logMapper;
 
     private final static Logger logger = LoggerFactory.getLogger(WebLogAspect.class);
     /** 换行符 */
@@ -36,30 +43,30 @@ public class WebLogAspect {
      * @param joinPoint
      * @throws Throwable
      */
-    @Before("webLog()")
-    public void doBefore(JoinPoint joinPoint) throws Throwable {
-        // 开始打印请求日志
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-
-        // 获取 @WebLog 注解的描述信息
-        String methodDescription = getAspectLogDescription(joinPoint);
-
-        // 打印请求相关参数
-        logger.info("========================================== Start ==========================================");
-        // 打印请求 url
-        logger.info("URL            : {}", request.getRequestURL().toString());
-        // 打印描述信息
-        logger.info("Description    : {}", methodDescription);
-        // 打印 Http method
-        logger.info("HTTP Method    : {}", request.getMethod());
-        // 打印调用 controller 的全路径以及执行方法
-        logger.info("Class Method   : {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
-        // 打印请求的 IP
-        logger.info("IP             : {}", request.getRemoteAddr());
-        // 打印请求入参
-        logger.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
-    }
+//    @Before("webLog()")
+//    public void doBefore(JoinPoint joinPoint) throws Throwable {
+//        // 开始打印请求日志
+//        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//        HttpServletRequest request = attributes.getRequest();
+//
+//        // 获取 @WebLog 注解的描述信息
+//        String methodDescription = getAspectLogDescription(joinPoint);
+//
+//        // 打印请求相关参数
+//        logger.info("========================================== Start ==========================================");
+//        // 打印请求 url
+//        logger.info("URL            : {}", request.getRequestURL().toString());
+//        // 打印描述信息
+//        logger.info("Description    : {}", methodDescription);
+//        // 打印 Http method
+//        logger.info("HTTP Method    : {}", request.getMethod());
+//        // 打印调用 controller 的全路径以及执行方法
+//        logger.info("Class Method   : {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
+//        // 打印请求的 IP
+//        logger.info("IP             : {}", request.getRemoteAddr());
+//        // 打印请求入参
+//        logger.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
+//    }
 
     /**
      * 在切点之后织入
@@ -80,11 +87,47 @@ public class WebLogAspect {
     @Around("webLog()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
+        // 开始打印请求日志
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+
+        // 获取 @WebLog 注解的描述信息
+        String methodDescription = getAspectLogDescription(proceedingJoinPoint);
+
+        // 打印请求相关参数
+        logger.info("========================================== Start ==========================================");
+        // 打印请求 url
+        logger.info("URL            : {}", request.getRequestURL().toString());
+        // 打印描述信息
+        logger.info("Description    : {}", methodDescription);
+        // 打印 Http method
+        logger.info("HTTP Method    : {}", request.getMethod());
+        // 打印调用 controller 的全路径以及执行方法
+        logger.info("Class Method   : {}.{}", proceedingJoinPoint.getSignature().getDeclaringTypeName(), proceedingJoinPoint.getSignature().getName());
+        // 打印请求的 IP
+        logger.info("IP             : {}", request.getRemoteAddr());
+        // 打印请求入参
+        logger.info("Request Args   : {}", new Gson().toJson(proceedingJoinPoint.getArgs()));
+
         Object result = proceedingJoinPoint.proceed();
         // 打印出参
         logger.info("Response Args  : {}", new Gson().toJson(result));
         // 执行耗时
-        logger.info("Time-Consuming : {} ms", System.currentTimeMillis() - startTime);
+        Long spendTime = System.currentTimeMillis() - startTime;
+        logger.info("Time-Consuming : {} ms", spendTime);
+
+        // 记录日志表
+        Log log = Log.builder()
+                .ip(request.getRemoteAddr())
+                .operation(methodDescription)
+                .method(request.getMethod())
+                .params(new Gson().toJson(proceedingJoinPoint.getArgs()))
+                .spendTime(spendTime.intValue())
+                .createTime(LocalDateTime.now())
+                .responseArgs(new Gson().toJson(result)).build();
+
+        logMapper.insert(log);
+
         return result;
     }
 

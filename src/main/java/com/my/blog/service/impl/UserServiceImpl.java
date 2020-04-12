@@ -73,6 +73,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return ResultUtil.success(user);
     }
 
+    @Override
+    public ResultBean delUserById(User user) {
+        if (user.getId() == null) {
+            return ResultUtil.error(ResultEnum.PARAMETER_ERROR.getCode(), ResultEnum.PARAMETER_ERROR.getMsg());
+        }
+        redisTemplate.delete(user.getUsername());
+
+        userMapper.deleteById(user.getId());
+
+        return ResultUtil.success();
+    }
 
 
 }

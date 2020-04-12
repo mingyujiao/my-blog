@@ -31,14 +31,19 @@ public class UserController {
      * 根据ID获取用户信息，返回user对象
      * @return
      */
-    @WebLog
+    @WebLog(description = "根据用户ID查询用户信息")
     @GetMapping("/userId/{userId}")
     public ResultBean findUserById(@PathVariable String userId){
         User user = iUserService.getById(userId);
         return ResultUtil.success(user);
     }
 
-    @WebLog
+    /**
+     * 添加用户信息
+     * @param user
+     * @return
+     */
+    @WebLog(description = "添加用户信息")
     @PostMapping("save")
     public ResultBean saveUser(@Validated @RequestBody User user){
 //        if(bindingResult.hasErrors()) {
@@ -47,6 +52,12 @@ public class UserController {
 //        }
 
         return iUserService.saveOrUpdateUser(user);
+    }
+
+    @WebLog(description = "根据ID删除用户信息")
+    @PostMapping("delUser")
+    public ResultBean delUser(@Validated @RequestBody User user){
+        return iUserService.delUserById(user);
     }
 
 
