@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+
 
 /**
  * <p>
@@ -33,7 +35,7 @@ public class UserController {
      */
     @WebLog(description = "根据用户ID查询用户信息")
     @GetMapping("/userId/{userId}")
-    public ResultBean findUserById(@PathVariable String userId){
+    public ResultBean findUserById(@NotNull(message = "ID不能为空") @PathVariable String userId){
         User user = iUserService.getById(userId);
         return ResultUtil.success(user);
     }
