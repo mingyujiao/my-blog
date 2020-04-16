@@ -4,9 +4,14 @@ package com.my.blog.controller;
 import com.my.blog.config.WebLog;
 import com.my.blog.entity.User;
 import com.my.blog.service.IUserService;
+import com.my.blog.service.impl.UserServiceImpl;
 import com.my.blog.util.ResultBean;
+import com.my.blog.util.ResultEnum;
 import com.my.blog.util.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskRejectedException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +30,8 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/user")
 @Validated
 public class UserController {
+
+    private final static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private IUserService iUserService;
@@ -47,12 +54,7 @@ public class UserController {
      */
     @WebLog(description = "添加用户信息")
     @PostMapping("save")
-    public ResultBean saveUser(@Validated @RequestBody User user){
-//        if(bindingResult.hasErrors()) {
-//            String defaultMessage = bindingResult.getFieldError().getDefaultMessage();
-//            return ResultUtil.error(ResultEnum.DATA_IS_NULL.getCode(), defaultMessage);
-//        }
-
+    public ResultBean saveUser(@Validated @RequestBody User user) {
         return iUserService.saveOrUpdateUser(user);
     }
 

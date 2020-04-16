@@ -2,6 +2,7 @@ package com.my.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.my.blog.config.WebLogAspect;
 import com.my.blog.entity.User;
 import com.my.blog.mapper.UserMapper;
 import com.my.blog.service.IUserService;
@@ -9,8 +10,11 @@ import com.my.blog.util.PasswordUtil;
 import com.my.blog.util.ResultBean;
 import com.my.blog.util.ResultEnum;
 import com.my.blog.util.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
+    private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -40,10 +46,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 
     @Override
+    @Async
     public ResultBean saveOrUpdateUser(User user){
-
+        logger.debug("线程正在执行这个方法：Thread{}",Thread.currentThread().getName());
         // 先查询redis缓存中是否存在该用户
-        User oldUser = (User) redisTemplate.opsForValue().get(user.getUsername());
+        User oldUser = (User) redisTemplate.opsForHash().get("user", user.getUsername());
         if (oldUser != null) {
             return ResultUtil.error(ResultEnum.USER_IS_EXISTS.getCode(), ResultEnum.USER_IS_EXISTS.getMsg());
         }
@@ -54,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (oldUser != null) {
             // 将该用户放入缓存中，主要测试玩
             // redisTemplate.opsForValue().set(user.getUsername(), user, 10, TimeUnit.SECONDS);
-            redisTemplate.opsForValue().set(user.getUsername(), user);
+            redisTemplate.opsForHash().put("user", user.getUsername(), user);
             return ResultUtil.error(ResultEnum.USER_IS_EXISTS.getCode(), ResultEnum.USER_IS_EXISTS.getMsg());
         }
         if (user.getId() == null) {
@@ -66,10 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         } else {
             userMapper.update(user);
         }
-        // 将该用户放入缓存中
-        // 设置key的过期时间
-        // redisTemplate.opsForValue().set(user.getUsername(), user, 10, TimeUnit.SECONDS);
-        redisTemplate.opsForValue().set(user.getUsername(), user);
+        redisTemplate.opsForHash().put("user" ,user.getUsername(), user);
         return ResultUtil.success(user);
     }
 

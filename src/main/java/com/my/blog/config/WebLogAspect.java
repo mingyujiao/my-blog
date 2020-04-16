@@ -75,7 +75,7 @@ public class WebLogAspect {
     @After("webLog()")
     public void doAfter() throws Throwable {
         // 接口结束后换行，方便分割查看
-        logger.info("=========================================== End ===========================================" + LINE_SEPARATOR);
+//        logger.info("=========================================== End ===========================================" + LINE_SEPARATOR);
     }
 
     /**
@@ -95,26 +95,26 @@ public class WebLogAspect {
         String methodDescription = getAspectLogDescription(proceedingJoinPoint);
 
         // 打印请求相关参数
-        logger.info("========================================== Start ==========================================");
-        // 打印请求 url
-        logger.info("URL            : {}", request.getRequestURL().toString());
-        // 打印描述信息
-        logger.info("Description    : {}", methodDescription);
-        // 打印 Http method
-        logger.info("HTTP Method    : {}", request.getMethod());
-        // 打印调用 controller 的全路径以及执行方法
-        logger.info("Class Method   : {}.{}", proceedingJoinPoint.getSignature().getDeclaringTypeName(), proceedingJoinPoint.getSignature().getName());
-        // 打印请求的 IP
-        logger.info("IP             : {}", request.getRemoteAddr());
-        // 打印请求入参
-        logger.info("Request Args   : {}", new Gson().toJson(proceedingJoinPoint.getArgs()));
-
+//        logger.info("========================================== Start ==========================================");
+//        // 打印请求 url
+//        logger.info("URL            : {}", request.getRequestURL().toString());
+//        // 打印描述信息
+//        logger.info("Description    : {}", methodDescription);
+//        // 打印 Http method
+//        logger.info("HTTP Method    : {}", request.getMethod());
+//        // 打印调用 controller 的全路径以及执行方法
+//        logger.info("Class Method   : {}.{}", proceedingJoinPoint.getSignature().getDeclaringTypeName(), proceedingJoinPoint.getSignature().getName());
+//        // 打印请求的 IP
+//        logger.info("IP             : {}", request.getRemoteAddr());
+//        // 打印请求入参
+//        logger.info("Request Args   : {}", new Gson().toJson(proceedingJoinPoint.getArgs()));
+//
         Object result = proceedingJoinPoint.proceed();
-        // 打印出参
-        logger.info("Response Args  : {}", new Gson().toJson(result));
-        // 执行耗时
+//        // 打印出参
+//        logger.info("Response Args  : {}", new Gson().toJson(result));
+//        // 执行耗时
         Long spendTime = System.currentTimeMillis() - startTime;
-        logger.info("Time-Consuming : {} ms", spendTime);
+//        logger.info("Time-Consuming : {} ms", spendTime);
 
         // 记录日志表
         Log log = Log.builder()

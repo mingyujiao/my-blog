@@ -37,7 +37,7 @@ public class TagsController {
      */
     @WebLog(description = "获取文章分类信息")
     @GetMapping("/tags/{tagsId}")
-    public ResultBean findTagsById(@NotNull(message = "ID不能为空") @PathVariable String tagsId){
+    public ResultBean findTagsById(@PathVariable String tagsId){
         return tagsService.getTagsById(tagsId);
     }
 
