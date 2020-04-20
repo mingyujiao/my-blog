@@ -33,7 +33,6 @@ public class TagsServiceImpl extends ServiceImpl<TagsMapper, Tags> implements IT
 
     @Override
     public ResultBean<Tags> saveOrUpdateTags(Tags tags) {
-
         if (tags.getId() == null) {
             tagsMapper.insert(tags);
         } else {

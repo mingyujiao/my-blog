@@ -48,7 +48,6 @@ public class PasswordUtil {
             cs2[i / 3] = md5.charAt(i + 1);
         }
         String salt = new String(cs2);
-        System.err.println(salt);
         return md5Hex(password + salt).equals(new String(cs1));
     }
 

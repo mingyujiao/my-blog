@@ -3,6 +3,7 @@ package com.my.blog.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.my.blog.config.WebLogAspect;
+import com.my.blog.entity.CurrentUserInfo;
 import com.my.blog.entity.User;
 import com.my.blog.mapper.UserMapper;
 import com.my.blog.service.IUserService;
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -39,11 +41,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private UserMapper userMapper;
-
-//    public User findUserById(Long userId){
-//        return userMapper.selectById(userId);
-//    }
-
 
     @Override
     @Async
@@ -71,7 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             user.setLastLoginTime(LocalDateTime.now());
             userMapper.insert(user);
         } else {
-            userMapper.update(user);
+            userMapper.updateById(user);
         }
         redisTemplate.opsForHash().put("user" ,user.getUsername(), user);
         return ResultUtil.success(user);
@@ -87,6 +84,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         userMapper.deleteById(user.getId());
 
         return ResultUtil.success();
+    }
+
+    @Override
+    public CurrentUserInfo queryUserInfoByName(String username) {
+        CurrentUserInfo currentUserInfo = userMapper.queryUserInfoByName(username);
+        return currentUserInfo;
+    }
+
+    @Override
+    public User queryUserByName(String username) {
+
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+
+        wrapper.select("id","username", "password").eq("username", username);
+        List<User> users = userMapper.selectList(wrapper);
+
+        return users.size() > 0 ? users.get(0) : null;
     }
 
 

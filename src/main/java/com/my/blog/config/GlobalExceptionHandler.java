@@ -3,10 +3,9 @@ package com.my.blog.config;
 import com.my.blog.util.ResultBean;
 import com.my.blog.util.ResultEnum;
 import com.my.blog.util.ResultUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,10 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author jiaomingyu5778@gmail.com
@@ -25,9 +21,8 @@ import java.util.stream.Collectors;
  * 异常统一处理
  */
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
@@ -38,9 +33,12 @@ public class GlobalExceptionHandler {
         if (e instanceof MethodArgumentNotValidException) {
             String message = ((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().iterator().next().getDefaultMessage();
             result = ResultUtil.error(ResultEnum.PARAMETER_ERROR.getCode(), message);
-        }else {
+        } else if (e instanceof ConstraintViolationException) {
+            String message = ((ConstraintViolationException) e).getConstraintViolations().iterator().next().getMessage();
+            result = ResultUtil.error(ResultEnum.PARAMETER_ERROR.getCode(), message);
+        } else {
             //对系统级异常进行日志记录
-            logger.error("系统异常:" + e.getMessage(), e);
+            log.error("系统异常:{}", e.getMessage(), e);
         }
         return result;
     }

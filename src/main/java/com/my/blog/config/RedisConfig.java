@@ -22,9 +22,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * 这样就保证我们的配置类生效，并且不会被覆盖配置  选择性配置
  */
 @Configuration
-//@AutoConfigureAfter(RedisAutoConfiguration.class)
 public class RedisConfig {
-
 
     /**
      * 配置自定义redisTemplate

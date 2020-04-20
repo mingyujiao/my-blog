@@ -13,7 +13,8 @@ public enum ResultEnum {
     USER_NOT_EXIST(1,"用户不存在"),
     USER_IS_EXISTS(2,"用户已存在"),
     DATA_IS_NULL(3,"数据为空"),
-    PARAMETER_ERROR(4, "参数错误")
+    PARAMETER_ERROR(4, "参数错误"),
+    LOGIN_ERROR(5, "用户名或密码错误")
     ;
     private Integer code;
     private String msg;

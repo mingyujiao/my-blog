@@ -1,6 +1,7 @@
 package com.my.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.my.blog.entity.CurrentUserInfo;
 import com.my.blog.entity.User;
 import com.my.blog.util.ResultBean;
 
@@ -17,4 +18,8 @@ public interface IUserService extends IService<User> {
     ResultBean saveOrUpdateUser(User user);
 
     ResultBean delUserById(User user);
+
+    CurrentUserInfo queryUserInfoByName(String username);
+
+    User queryUserByName(String name);
 }
