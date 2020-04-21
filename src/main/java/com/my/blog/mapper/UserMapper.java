@@ -1,9 +1,7 @@
 package com.my.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.my.blog.entity.CurrentUserInfo;
 import com.my.blog.entity.User;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -14,7 +12,5 @@ import org.apache.ibatis.annotations.Param;
  * @since 2020-04-07
  */
 public interface UserMapper extends BaseMapper<User> {
-
-    CurrentUserInfo queryUserInfoByName (@Param("username") String username);
 
 }

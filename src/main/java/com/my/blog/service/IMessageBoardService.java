@@ -1,7 +1,10 @@
 package com.my.blog.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.my.blog.entity.MessageBoard;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,5 @@ import com.my.blog.entity.MessageBoard;
  * @since 2020-04-07
  */
 public interface IMessageBoardService extends IService<MessageBoard> {
-
+    Page<MessageBoard> selectPage(Page<MessageBoard> page);
 }

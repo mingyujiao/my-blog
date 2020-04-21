@@ -13,9 +13,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -46,9 +48,12 @@ public class User implements Serializable {
     private String username;
 
     @NotBlank(message = "密码必输！")
+    @Length(min = 8, max = 15, message = "密码长度需要在8位到15为之间")
     @ApiModelProperty(value = "密码")
     private String password;
 
+    @Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
+    @NotBlank(message = "手机号码不能为空")
     @ApiModelProperty(value = "电话号码")
     private String phone;
 

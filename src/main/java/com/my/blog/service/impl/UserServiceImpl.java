@@ -2,8 +2,6 @@ package com.my.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.my.blog.config.WebLogAspect;
-import com.my.blog.entity.CurrentUserInfo;
 import com.my.blog.entity.User;
 import com.my.blog.mapper.UserMapper;
 import com.my.blog.service.IUserService;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -84,12 +81,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         userMapper.deleteById(user.getId());
 
         return ResultUtil.success();
-    }
-
-    @Override
-    public CurrentUserInfo queryUserInfoByName(String username) {
-        CurrentUserInfo currentUserInfo = userMapper.queryUserInfoByName(username);
-        return currentUserInfo;
     }
 
     @Override

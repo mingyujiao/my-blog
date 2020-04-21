@@ -2,11 +2,8 @@ package com.my.blog.controller;
 
 
 import com.my.blog.config.WebLog;
-import com.my.blog.entity.CurrentUserInfo;
 import com.my.blog.entity.User;
-import com.my.blog.mapper.UserMapper;
 import com.my.blog.service.IUserService;
-import com.my.blog.service.impl.UserServiceImpl;
 import com.my.blog.util.ResultBean;
 import com.my.blog.util.ResultEnum;
 import com.my.blog.util.ResultUtil;
@@ -14,17 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.TaskRejectedException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -82,9 +74,9 @@ public class UserController {
     public ResultBean getCurrentUser(HttpSession session) {
 
         String loginName = (String) session.getAttribute(LOGIN_NAME_KEY);
-        CurrentUserInfo currentUserInfo = iUserService.queryUserInfoByName(loginName);
+        User userInfo = iUserService.queryUserByName(loginName);
 
-        return ResultUtil.success(currentUserInfo);
+        return ResultUtil.success(userInfo);
     }
 
     @PostMapping("/login")
