@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -34,18 +36,22 @@ public class Article implements Serializable {
     @ApiModelProperty(value = "文章id")
     private Long articleId;
 
+    @NotNull(message = "请填写作者")
     @ApiModelProperty(value = "作者")
     private String author;
 
+    @NotNull(message = "文章标题不能为空")
     @ApiModelProperty(value = "文章标题")
     private String articleTitle;
 
+    @NotNull(message = "文章类别不能为空")
     @ApiModelProperty(value = "类别")
     private String type;
 
     @ApiModelProperty(value = "摘要")
     private String summary;
 
+    @NotNull(message = "分类信息不能为空")
     @ApiModelProperty(value = "分类")
     private String categories;
 

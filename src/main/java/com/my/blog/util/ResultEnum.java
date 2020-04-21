@@ -14,7 +14,9 @@ public enum ResultEnum {
     USER_IS_EXISTS(2,"用户已存在"),
     DATA_IS_NULL(3,"数据为空"),
     PARAMETER_ERROR(4, "参数错误"),
-    LOGIN_ERROR(5, "用户名或密码错误")
+    LOGIN_ERROR(5, "用户名或密码错误"),
+    NOT_GET_CAPTCHA(1007, "请先获取校验码"),
+    CAPTCHA_VERIFY_FAILED(1008, "校验码未校验通过")
     ;
     private Integer code;
     private String msg;

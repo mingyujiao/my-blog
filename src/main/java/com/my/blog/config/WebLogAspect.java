@@ -115,16 +115,19 @@ public class WebLogAspect {
 //        // 执行耗时
         Long spendTime = System.currentTimeMillis() - startTime;
 //        logger.info("Time-Consuming : {} ms", spendTime);
-
+        String args = new Gson().toJson(proceedingJoinPoint.getArgs());
+        String strResult = new Gson().toJson(result);
+        args = args.length() > 2048 ? args.substring(0, 2048) : args;
+        strResult = strResult.length() > 2048 ? strResult.substring(0, 2048) : strResult;
         // 记录日志表
         Log log = Log.builder()
                 .ip(request.getRemoteAddr())
                 .operation(methodDescription)
                 .method(request.getMethod())
-                .params(new Gson().toJson(proceedingJoinPoint.getArgs()))
+                .params(args)
                 .spendTime(spendTime.intValue())
                 .createTime(LocalDateTime.now())
-                .responseArgs(new Gson().toJson(result)).build();
+                .responseArgs(strResult).build();
 
         logMapper.insert(log);
 
