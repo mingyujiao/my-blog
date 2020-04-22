@@ -4,3 +4,4 @@ jdk1.8
 mybatis-plus(简单使用，深入了解还要去官网查询文档) 
 springboot2.* 
 redis（简单测试）
+shiro 登录
