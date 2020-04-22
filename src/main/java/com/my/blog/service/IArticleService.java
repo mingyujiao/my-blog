@@ -17,4 +17,10 @@ import java.util.List;
 public interface IArticleService extends IService<Article> {
 
     Page<Article> queryArticlesByKey(String key, Integer offset, Integer limit);
+
+    void saveArticle(Article article);
+
+    Page<Article> queryArticleListByTimeLine(String timeLine, Integer offset, Integer limit);
+
+    Page<Article> queryArticleListByVisits(Integer offset, Integer limit);
 }

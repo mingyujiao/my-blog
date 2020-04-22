@@ -51,13 +51,28 @@ public class ArticleController {
     @WebLog(description = "添加文章")
     public ResultBean publishArticle(@Validated Article article) throws UnsupportedEncodingException {
 
-        long articleId = System.currentTimeMillis();
-        article.setArticleId(articleId);
-        article.setTimeline(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
-        article.setCreateTime(LocalDateTime.now());
-        article.setUpdateTime(LocalDateTime.now());
-
-        iArticleService.save(article);
+        iArticleService.saveArticle(article);
         return ResultUtil.success();
+    }
+
+    @GetMapping("/queryArticleListByTimeLine")
+    @WebLog(description = "根据时间轴，查询文章信息")
+    public ResultBean queryArticleListByTimeLine(String timeLine,
+                                                 @Min(value = 1, message = "最小为1") int offset,
+                                                 @Min(value = 1,message = "页数最小为1") int limit){
+
+        Page<Article> articleList = iArticleService.queryArticleListByTimeLine(timeLine, offset, limit);
+
+        return ResultUtil.success(articleList);
+    }
+
+    @GetMapping("/queryArticleListByVisits")
+    @WebLog(description = "根据时间轴，查询文章信息")
+    public ResultBean queryArticleListByVisits(@Min(value = 1, message = "最小为1") int offset,
+                                                 @Min(value = 1,message = "页数最小为1") int limit){
+
+        Page<Article> articleList = iArticleService.queryArticleListByVisits(offset, limit);
+
+        return ResultUtil.success(articleList);
     }
 }
